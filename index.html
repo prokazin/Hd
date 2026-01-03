@@ -11,7 +11,6 @@
 <body>
 <script type="module">
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
-    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/controls/OrbitControls.js';
 
     // Сцена, камера, рендерер
     const scene = new THREE.Scene();
@@ -20,13 +19,6 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     document.body.appendChild(renderer.domElement);
-
-    // Управление мышкой (крутить, приближать)
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.5;
 
     camera.position.z = 5;
 
@@ -40,13 +32,9 @@
     const colors = new Float32Array(particleCount * 3);
 
     for (let i = 0; i < particleCount; i++) {
-        // Угол по окружности
         const angle = (i / particleCount) * Math.PI * 2;
-
-        // Вариация радиуса для объёма
         const radiusVariation = radius + (Math.random() - 0.5) * thickness;
 
-        // Позиции на сфере с небольшим шумом
         const x = Math.cos(angle) * radiusVariation;
         const y = (Math.random() - 0.5) * thickness * 1.5;
         const z = Math.sin(angle) * radiusVariation;
@@ -55,8 +43,7 @@
         positions[i * 3 + 1] = y;
         positions[i * 3 + 2] = z;
 
-        // Красивый градиент цвета (HSL)
-        const hue = (i / particleCount) * 0.8 + 0.6; // от фиолетового к голубому
+        const hue = (i / particleCount) * 0.8 + 0.6;
         const color = new THREE.Color().setHSL(hue, 1.0, 0.6 + Math.random() * 0.2);
         
         colors[i * 3]     = color.r;
@@ -79,10 +66,11 @@
     const particles = new THREE.Points(geometry, material);
     scene.add(particles);
 
-    // Анимация
+    // Анимация с автоматическим вращением
     function animate() {
         requestAnimationFrame(animate);
-        controls.update();
+        particles.rotation.y += 0.001; // медленное вращение
+        particles.rotation.x += 0.0005;
         renderer.render(scene, camera);
     }
     animate();
@@ -90,9 +78,4 @@
     // Адаптация под размер окна
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-</script>
-</body>
-</html>
+        camera.updateProjectionMatrix
